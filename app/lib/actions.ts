@@ -1,5 +1,7 @@
 'use server';
 
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/dist/server/web/spec-extension/revalidate';
 import { redirect } from 'next/navigation';
 import postgres from 'postgres';
@@ -119,3 +121,24 @@ export type State = {
         status?: string[];
     };
 };
+
+export async function authenticate(prevState: string | undefined, formData: FormData) {
+    try {
+        await signIn('credentials', formData);
+    } catch (error) {
+        console.error('Authentication Error:', error);
+        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+            
+            return; // This is actually a successful redirect
+        }
+        if(error instanceof AuthError) {
+            switch(error.type) {
+                case 'CredentialsSignin':
+                    return 'Invalid credentials';
+                default:
+                    return 'Authentication Error';
+            }
+        }
+        return 'Authentication Error';
+    }
+}
