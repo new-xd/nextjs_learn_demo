@@ -128,8 +128,8 @@ export async function authenticate(prevState: string | undefined, formData: Form
     } catch (error) {
         console.error('Authentication Error:', error);
         if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-            
-            return; // This is actually a successful redirect
+
+            throw error;
         }
         if(error instanceof AuthError) {
             switch(error.type) {
