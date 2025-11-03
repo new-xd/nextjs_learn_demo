@@ -97,7 +97,6 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
 
 
 export async function deleteInvoice(id: string) {
-    throw new Error('Failed to Delete Invoice');
     try {
         await sql`
     DELETE FROM invoices WHERE id = ${id}
@@ -128,7 +127,6 @@ export async function authenticate(prevState: string | undefined, formData: Form
     } catch (error) {
         console.error('Authentication Error:', error);
         if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-
             throw error;
         }
         if(error instanceof AuthError) {
